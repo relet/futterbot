@@ -10,17 +10,43 @@
 
 package net.relet.futterbot;
 
+import java.io.*;
 import java.util.*;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
 
 
 public class futterbot implements Runnable, RosterListener, ChatManagerListener, MessageListener, ConnectionListener {
-  private final static String XMPP_USER = "xxx"; /* fill these in. TODO read from config file */
-  private final static String XMPP_PASS = "xxx";
-  private final static String XMPP_HOST = "xxx";
-  
+  private static HashMap<String, String> config = new HashMap<String, String>();
+
+  private static String XMPP_USER = "xxx"; /* fill these in. TODO read from config file */
+  private static String XMPP_PASS = "xxx";
+  private static String XMPP_HOST = "xxx";
+
   public static void main(String[] args) {
+    try {
+      BufferedReader in = new BufferedReader(new FileReader("futterbot.config")); //a minimalistic config parser
+      while (true) {
+        String line=in.readLine();
+        if (line==null) break;
+        int pos = line.indexOf("=");
+        String key = line.substring(0,pos).trim();
+        String value = line.substring(pos+1).trim();
+        config.put(key, value);
+      }
+    } catch (Exception ex) {
+      System.err.println("Could not read or parse configuration file futterbot.config.");
+      ex.printStackTrace();
+      System.exit(1);
+    }
+    try {
+      XMPP_USER=config.get("user");
+      XMPP_PASS=config.get("pass");
+      XMPP_HOST=config.get("host");
+    } catch (Exception ex) {
+      System.err.println("Missing config entries (host, user and/or pass).");
+      System.exit(1);
+    }
     new futterbot();
   }
 
