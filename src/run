@@ -1,1 +1,1 @@
-java -classpath .:./smack.jar:./smackx.jar net.relet.futterbot.futterbot
+java -classpath .:../lib/smack.jar:../lib/smackx.jar net.relet.futterbot.futterbot

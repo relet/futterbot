@@ -1,1 +1,1 @@
-javac -cp .:smack.jar net/relet/futterbot/futterbot.java
+javac -cp .:../lib/smack.jar net/relet/futterbot/futterbot.java
