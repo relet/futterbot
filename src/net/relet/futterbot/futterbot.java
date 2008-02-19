@@ -401,10 +401,10 @@ public class futterbot implements Runnable, RosterListener, ChatManagerListener,
         roster.removeEntry(user);
       } else if (msg[1].equals("rstg")) {
         votes.remove(msg[2]);
-        if (msg[2].equals(hiliteGroup)) updateHilite();
-      } else if (msg[1].equals("hilite")) {
-        hiliteGroup=msg[2];
         updateHilite();
+      //} else if (msg[1].equals("hilite")) {
+      //  hiliteGroup=msg[2];
+      //  updateHilite();
       } else if (msg[1].equals("send")) {
         String message="";
         for (int i=3;i<msg.length;i++)
@@ -463,13 +463,24 @@ public class futterbot implements Runnable, RosterListener, ChatManagerListener,
     if (votes.get(in)==null) votes.put(in, new HashMap<String, HashMap<String, ArrayList<String>>>());
     if (votes.get(in).get(about)==null) votes.get(in).put(about, new HashMap<String, ArrayList<String>>());
     ArrayList<String> choices=new ArrayList<String>();
-    for (int i=1;i<commands.length;i++) choices.add(commands[i]);
+    for (int i=1;i<commands.length;i++) {
+      choices.add(commands[i]); //TODO: recognize and remove separators such as ">", ",", "-" and ";"
+    }
     votes.get(in).get(about).put(user, choices);
-    if (in.equals(hiliteGroup)) updateHilite();
+    updateHilite();
     return "Your selection has been registered.";
   }
 
   private void updateHilite() {
+    hiliteGroup  = null;
+    int maxVotes = 0;
+    Iterator<String> votedGroups = votes.keySet().iterator();
+    while (votedGroups.hasNext()) {
+      String channel = votedGroups.next();
+      int count      = votes.get(channel).size();
+      if (count>maxVotes) hiliteGroup=channel;
+    }
+
     if (hiliteGroup==null) {
       presence.setStatus("at your service.");
     } else {
