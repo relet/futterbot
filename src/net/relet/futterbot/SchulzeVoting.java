@@ -35,6 +35,7 @@ public class SchulzeVoting<K> {
       ArrayList<K> ballot = ballots.get(i);
       for (int j=0; j<ballot.size(); j++) {
         K choice=ballot.get(j);
+        if (ballot.indexOf(choice)<j) continue; //ignore double mentions
         int pos   = candidates.indexOf(choice);
         for (int k=0; k<size; k++) {
           K comp=candidates.get(k);
