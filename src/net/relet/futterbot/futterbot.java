@@ -231,77 +231,84 @@ public class futterbot implements Runnable, RosterListener, ChatManagerListener,
     }
     message = message.replaceAll("<.*>","");
     System.out.println("processing "+user+" "+message);
-    String[] msg=message.toLowerCase().split("\\s+");
+    String[] msg=message.split("\\s+");
     String reply="If you read this, someone stole my reply message.";
     int sequel = -1;
-
+    
     if (msg.length==0) {
       sendBotMessage(user, "You seem so quiet today...");
       return;
+    } else if (msg.length > 512) {
+      sendBotMessage(user, "Aren't we a bit talkative?");
+      return;
     }
-    if (msg[0].equals("help")||msg[0].equals("usage")||msg[0].equals("wer")||msg[0].equals("who")||msg[0].equals("about")) {
+    
+    String msg0 = msg[0].toLowerCase();
+    //String msg1 = (msg.length<2)?null:msg[1].toLowerCase();
+
+    if (msg0.equals("help")||msg0.equals("usage")||msg0.equals("wer")||msg0.equals("who")||msg0.equals("about")) {
       reply = botPrintUsage();
       sequel = 1;
-    } else if (msg[0].equals("test")) {
+    } else if (msg0.equals("test")) {
       reply = "pong.\r\nI am testing you, you know.";
       sequel = 1;
-    } else if (msg[0].equals("groups")) {
+    } else if (msg0.equals("groups")) {
       reply = botPrintGroups(user);
       sequel = 1;
-    } else if (msg[0].equals("ignore")) {
+    } else if (msg0.equals("ignore")) {
       long duration = 18 * 3600 * 1000;
       try {
         duration = Long.parseLong(msg[1]) * 3600 * 1000;
       } catch (Exception ex) {} //nope.
       ignores.put(user, new Long(System.currentTimeMillis()+duration));
       reply = "Yeah, ok. I'm gonna bug somebuddy else for the next "+(duration/3600000)+" hours.";
-    } else if (msg[0].equals("join")) {
+    } else if (msg0.equals("join")) {
       if (msg.length<2) {
         reply = "Oh, oh, you're in the army now.\nIf you'd rather want to join another group, you'd have to name it.";
       } else {
         reply = botJoinGroup(user, msg[1]);
         sequel = 2;
       }
-    } else if (msg[0].equals("leave")) {
+    } else if (msg0.equals("leave")) {
       if (msg.length<2) {
         reply = "To take a leave, please contact human resources.\nIf you'd rather want to leave a group, you'd have to name it.";
       } else {
         reply = botLeaveGroup(user, msg[1]);
         sequel = 2;
       }
-    } else if (msg[0].equals("vote")) {
+    } else if (msg0.equals("vote")) {
       reply = botVote(user, msg);
-    } else if (msg[0].equals("sudo")) {
+    } else if (msg0.equals("sudo")) {
       reply = botSudo(user, msg);
-    } else if (msg[0].equals("nick")) {
+    } else if (msg0.equals("nick")) {
       String nick=(msg.length>=2)?msg[1]:null;
       reply = botNick(user, nick);
       sequel = (msg.length>=2)?2:-1;
-    } else if (msg[0].equals("say")) {
+    } else if (msg0.equals("say")) {
       reply = botSay(user, msg);
-    } else if (msg[0].equals("votes")||msg[0].equals("result")||msg[0].equals("tally")) {
+    } else if (msg0.equals("votes")||msg0.equals("result")||msg0.equals("tally")) {
       String topic = (msg.length>1)?msg[1]:null;
       reply = botResult(user, topic, false);
       sequel = 1;
-    } else if (msg[0].equals("voters")) {
+    } else if (msg0.equals("voters")) {
       String topic = (msg.length>1)?msg[1]:null;
       reply = botResult(user, topic, true);
       sequel = (msg.length>1)?2:1;
-    } else if (msg[0].equals("in")) {
+    } else if (msg0.equals("in")) {
       if (msg.length<2) {
         reply = "Careful with that return key.";
       } else {
         reply = botIn(user, msg[1]);
         sequel = 2;
       }
-    } else if (msg[0].equals("on")) {
+    } else if (msg0.equals("on")) {
       if (msg.length<2) {
         reply = "Careful with that return key.";
       } else {
         reply = botAbout(user, msg[1]);
         sequel = 2;
       }
-    } else if (msg[0].equals("members")) {
+    } else if (msg0.equals("members")) {
       String group = null;
       if (msg.length>=2) {
         group = msg[1];
@@ -333,7 +340,7 @@ public class futterbot implements Runnable, RosterListener, ChatManagerListener,
         }
       }
       if (group!=null) reply = botPrintMembers(group);
-    } else if (msg[0].equals("invite")) {
+    } else if (msg0.equals("invite")) {
       if (msg.length<2) {
         reply = "Whom shall I invite? You or some other jabber ID?";
       } else {

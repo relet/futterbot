@@ -28,7 +28,7 @@ public class SchulzeVoting<K> {
 
   public int[][] getPaths() {
     int size=candidates.size();
-    if (size>65535) return null; //use linkedlists everywhere?
+    if (size>Integer.MAX_VALUE) return null; //use linkedlists everywhere?
     /* count votes */
     int[][] defeats = new int[size][size];
     for (int i=0; i<ballots.size(); i++) {
